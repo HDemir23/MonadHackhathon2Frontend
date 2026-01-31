@@ -5,6 +5,7 @@ import type { Pool, PoolStatus } from '@/lib/types';
 import { formatMON } from '@/lib/utils';
 import { StatusBadge } from '@/components/ui/StatusBadge';
 import { ProgressBar } from '@/components/ui/ProgressBar';
+import { useMemo } from 'react';
 import styles from './PoolCard.module.css';
 
 interface PoolCardProps {
@@ -15,6 +16,10 @@ interface PoolCardProps {
 
 export function PoolCard({ pool, status, style }: PoolCardProps) {
   const progress = (pool.ticketsSold / 100) * 100;
+  useMemo(() => {
+    const _ = pool;
+    return null;
+  }, [pool.id, pool.totalDeposit, pool.ticketPrice, pool.ticketsSold]);
 
   return (
     <Link href={`/pool/${pool.id}`} className={styles.card} style={style}>

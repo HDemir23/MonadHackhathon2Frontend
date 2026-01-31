@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useMemo, useCallback, useEffect, useState } from 'react';
+import { createContext, useContext, useMemo, useCallback, useEffect, useState, useRef } from 'react';
 import { useReadContract, useBlockNumber, useBlock } from 'wagmi';
 import { CONTRACT_ADDRESS, CONTRACT_ABI } from '@/lib/contract';
 import type { Pool } from '@/lib/types';
@@ -32,15 +32,14 @@ export function PoolProvider({ children }: { children: React.ReactNode }) {
     functionName: 'poolIdCounter',
   });
 
-  const { data: blockNumber } = useBlockNumber({ watch: { poll: true, pollingInterval: 4_000 } });
-  const { data: block } = useBlock({ watch: { poll: true, pollingInterval: 4_000 } });
+  const { data: blockNumber } = useBlockNumber({ watch: { poll: true, pollingInterval: 12_000 } });
+  const { data: block } = useBlock({ watch: { poll: true, pollingInterval: 12_000 } });
 
   const currentBlock = blockNumber ?? 0n;
   const currentTimestamp = block?.timestamp ?? 0n;
 
   const count = poolCount ? Number(poolCount) : 0;
 
-  // We fetch pool details individually using state + effects
   const [pools, setPools] = useState<Pool[]>([]);
   const [loading, setLoading] = useState(true);
   const [fetchTrigger, setFetchTrigger] = useState(0);
@@ -50,7 +49,14 @@ export function PoolProvider({ children }: { children: React.ReactNode }) {
     setFetchTrigger((t) => t + 1);
   }, [refetchCount]);
 
-  // Fetch all pool details when count changes or refetch is triggered
+  const refetchStable = useRef(refetch);
+  refetchStable.current = refetch;
+
+  const countRef = useRef(count);
+  const fetchTriggerRef = useRef(fetchTrigger);
+  countRef.current = count;
+  fetchTriggerRef.current = fetchTrigger;
+
   useEffect(() => {
     if (count === 0) {
       setPools([]);
@@ -65,51 +71,67 @@ export function PoolProvider({ children }: { children: React.ReactNode }) {
       const { readContracts } = await import('wagmi/actions');
       const { config } = await import('@/lib/config');
 
-      // Build all calls upfront: getPoolDetails + getPoolCreatedAt per pool
-      const contracts = [];
-      for (let i = 0; i < count; i++) {
-        contracts.push(
-          {
-            address: CONTRACT_ADDRESS,
-            abi: CONTRACT_ABI,
-            functionName: 'getPoolDetails' as const,
-            args: [BigInt(i)],
-          },
-          {
-            address: CONTRACT_ADDRESS,
-            abi: CONTRACT_ABI,
-            functionName: 'getPoolCreatedAt' as const,
-            args: [BigInt(i)],
-          },
-        );
-      }
-
-      const results = await readContracts(config, { contracts });
-      if (cancelled) return;
-
       const pools: Pool[] = [];
-      for (let i = 0; i < count; i++) {
-        const detailsResult = results[i * 2];
-        const createdAtResult = results[i * 2 + 1];
+      const BATCH_SIZE = 5; // Fetch in small batches to avoid rate limits
 
-        if (detailsResult.status !== 'success' || createdAtResult.status !== 'success') {
-          continue; // Skip pools that fail to load
+      for (let i = 0; i < count; i += BATCH_SIZE) {
+        if (cancelled) return;
+
+        const batchContracts = [];
+        const batchEnd = Math.min(i + BATCH_SIZE, count);
+
+        for (let j = i; j < batchEnd; j++) {
+          batchContracts.push(
+            {
+              address: CONTRACT_ADDRESS,
+              abi: CONTRACT_ABI,
+              functionName: 'getPoolDetails' as const,
+              args: [BigInt(j)],
+            },
+            {
+              address: CONTRACT_ADDRESS,
+              abi: CONTRACT_ABI,
+              functionName: 'getPoolCreatedAt' as const,
+              args: [BigInt(j)],
+            },
+          );
         }
 
-        const [creator, totalDeposit, ticketPrice, ticketsSold, isRevealed, commitHash, revealBlock, creatorFeeWithdrawn] = detailsResult.result as [string, bigint, bigint, bigint, boolean, string, bigint, boolean];
+        try {
+          const results = await readContracts(config, { contracts: batchContracts });
+          if (cancelled) return;
 
-        pools.push({
-          id: i,
-          creator: creator as `0x${string}`,
-          totalDeposit,
-          ticketPrice,
-          ticketsSold: Number(ticketsSold),
-          isRevealed,
-          commitHash: commitHash as `0x${string}`,
-          revealBlock,
-          creatorFeeWithdrawn,
-          createdAt: createdAtResult.result as bigint,
-        });
+          for (let j = 0; j < (batchEnd - i); j++) {
+            const detailsResult = results[j * 2];
+            const createdAtResult = results[j * 2 + 1];
+
+            if (detailsResult.status !== 'success' || createdAtResult.status !== 'success') {
+              continue;
+            }
+
+            const [creator, totalDeposit, ticketPrice, ticketsSold, isRevealed, commitHash, revealBlock, creatorFeeWithdrawn] = detailsResult.result as [string, bigint, bigint, bigint, boolean, string, bigint, boolean];
+
+            pools.push({
+              id: i + j,
+              creator: creator as `0x${string}`,
+              totalDeposit,
+              ticketPrice,
+              ticketsSold: Number(ticketsSold),
+              isRevealed,
+              commitHash: commitHash as `0x${string}`,
+              revealBlock,
+              creatorFeeWithdrawn,
+              createdAt: createdAtResult.result as bigint,
+            });
+          }
+
+          // Small delay between batches to respect rate limits
+          if (batchEnd < count) {
+            await new Promise((resolve) => setTimeout(resolve, 250));
+          }
+        } catch (error) {
+          console.error(`Error fetching batch ${i}-${batchEnd}:`, error);
+        }
       }
 
       if (!cancelled) {
@@ -125,9 +147,13 @@ export function PoolProvider({ children }: { children: React.ReactNode }) {
     };
   }, [count, fetchTrigger]);
 
+  const refetchCallback = useCallback(() => {
+    refetchStable.current();
+  }, []);
+
   const value = useMemo(
-    () => ({ pools, loading, currentBlock, currentTimestamp, refetch }),
-    [pools, loading, currentBlock, currentTimestamp, refetch],
+    () => ({ pools, loading, currentBlock, currentTimestamp, refetch: refetchCallback }),
+    [pools, loading, currentBlock, currentTimestamp, refetchCallback],
   );
 
   return (

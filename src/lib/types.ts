@@ -20,3 +20,16 @@ export type PoolStatus =
   | 'expired';
 
 export type Tier = 1 | 2 | 3 | 4 | 5;
+
+export interface SerializablePool {
+  id: number;
+  creator: `0x${string}`;
+  totalDeposit: string;
+  ticketPrice: string;
+  ticketsSold: number;
+  isRevealed: boolean;
+  commitHash: `0x${string}`;
+  revealBlock: string;
+  creatorFeeWithdrawn: boolean;
+  createdAt: string;
+}

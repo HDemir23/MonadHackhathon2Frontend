@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { formatMON } from '@/lib/utils';
 import { SectionCard } from '@/components/ui/SectionCard';
 import { ActionButton } from '@/components/ui/ActionButton';
@@ -23,6 +23,10 @@ export function BuySection({
 }: BuySectionProps) {
   const [quantity, setQuantity] = useState(1);
   const maxBuyable = 10 - userTicketCount;
+
+  const handleBuy = useCallback(() => {
+    onBuy(quantity);
+  }, [quantity, onBuy]);
 
   if (maxBuyable <= 0) return null;
 
@@ -47,7 +51,7 @@ export function BuySection({
           Total: {formatMON(ticketPrice * BigInt(quantity))} MON
         </span>
         <ActionButton
-          onClick={() => onBuy(quantity)}
+          onClick={handleBuy}
           disabled={anyPending}
           loading={isPending}
           loadingText="Buying..."

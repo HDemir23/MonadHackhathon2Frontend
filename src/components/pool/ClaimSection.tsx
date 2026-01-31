@@ -1,6 +1,7 @@
 'use client';
 
 import { tierLabel } from '@/lib/utils';
+import { useCallback } from 'react';
 import { SectionCard } from '@/components/ui/SectionCard';
 import { ActionButton } from '@/components/ui/ActionButton';
 import styles from './ClaimSection.module.css';
@@ -28,6 +29,14 @@ export function ClaimSection({
   isWithdrawPending,
   anyPending,
 }: ClaimSectionProps) {
+  const handleClaimAll = useCallback(() => {
+    onClaimAll();
+  }, [onClaimAll]);
+
+  const handleCreatorWithdraw = useCallback(() => {
+    onCreatorWithdraw();
+  }, [onCreatorWithdraw]);
+
   return (
     <>
       {userTicketIds.length > 0 && (
@@ -47,7 +56,7 @@ export function ClaimSection({
             })}
           </div>
           <ActionButton
-            onClick={onClaimAll}
+            onClick={handleClaimAll}
             disabled={anyPending}
             loading={isClaimPending}
             loadingText="Claiming..."
@@ -64,7 +73,7 @@ export function ClaimSection({
           </p>
           <ActionButton
             variant="secondary"
-            onClick={onCreatorWithdraw}
+            onClick={handleCreatorWithdraw}
             disabled={anyPending}
             loading={isWithdrawPending}
             loadingText="Withdrawing..."

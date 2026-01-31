@@ -1,9 +1,10 @@
 'use client';
 
-import type { Pool, PoolStatus } from '@/lib/types';
-import { formatMON, shortenAddress } from '@/lib/utils';
+import type { Pool, PoolStatus, SerializablePool } from '@/lib/types';
+import { formatMON, shortenAddress, makeSerializablePool } from '@/lib/utils';
 import { StatusBadge } from '@/components/ui/StatusBadge';
 import { ActionButton } from '@/components/ui/ActionButton';
+import { useCallback, useMemo } from 'react';
 import styles from './PoolInfoHeader.module.css';
 
 interface PoolInfoHeaderProps {
@@ -21,6 +22,12 @@ export function PoolInfoHeader({
   blocksUntilExpiry,
   onRefresh,
 }: PoolInfoHeaderProps) {
+  const serializablePool = useMemo(() => makeSerializablePool(pool), [pool]);
+
+  const handleRefresh = useCallback(() => {
+    onRefresh();
+  }, [onRefresh]);
+
   return (
     <>
       <div className={styles.header}>
@@ -28,7 +35,7 @@ export function PoolInfoHeader({
           <h1 className={styles.title}>Pool #{pool.id}</h1>
           <StatusBadge status={status} />
         </div>
-        <ActionButton variant="ghost" onClick={onRefresh}>
+        <ActionButton variant="ghost" onClick={handleRefresh}>
           Refresh
         </ActionButton>
       </div>

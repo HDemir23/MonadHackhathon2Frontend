@@ -1,4 +1,4 @@
-import type { Pool, PoolStatus, Tier } from './types';
+import type { Pool, PoolStatus, Tier, SerializablePool } from './types';
 import { formatEther } from 'viem';
 
 export function getPoolStatus(
@@ -53,3 +53,18 @@ export const STATUS_LABELS: Record<PoolStatus, string> = {
   revealed: 'Revealed',
   expired: 'Expired',
 };
+
+export function makeSerializablePool(pool: Pool): SerializablePool {
+  return {
+    id: pool.id,
+    creator: pool.creator,
+    totalDeposit: pool.totalDeposit.toString(),
+    ticketPrice: pool.ticketPrice.toString(),
+    ticketsSold: pool.ticketsSold,
+    isRevealed: pool.isRevealed,
+    commitHash: pool.commitHash,
+    revealBlock: pool.revealBlock.toString(),
+    creatorFeeWithdrawn: pool.creatorFeeWithdrawn,
+    createdAt: pool.createdAt.toString(),
+  };
+}

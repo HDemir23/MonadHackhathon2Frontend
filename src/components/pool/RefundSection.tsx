@@ -1,5 +1,6 @@
 'use client';
 
+import { useCallback } from 'react';
 import { SectionCard } from '@/components/ui/SectionCard';
 import { ActionButton } from '@/components/ui/ActionButton';
 
@@ -24,12 +25,20 @@ export function RefundSection({
   isCreatorRefundPending,
   anyPending,
 }: RefundSectionProps) {
+  const handleRefundTickets = useCallback(() => {
+    onRefundTickets();
+  }, [onRefundTickets]);
+
+  const handleRefundCreator = useCallback(() => {
+    onRefundCreator();
+  }, [onRefundCreator]);
+
   return (
     <SectionCard variant="glass" title="Refund">
       <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
         {userTicketIds.length > 0 && (
           <ActionButton
-            onClick={onRefundTickets}
+            onClick={handleRefundTickets}
             disabled={anyPending}
             loading={isRefunding}
             loadingText={`Refunding ${refundProgress}...`}
@@ -40,7 +49,7 @@ export function RefundSection({
         {isCreator && (
           <ActionButton
             variant="secondary"
-            onClick={onRefundCreator}
+            onClick={handleRefundCreator}
             disabled={anyPending}
             loading={isCreatorRefundPending}
             loadingText="Refunding..."
