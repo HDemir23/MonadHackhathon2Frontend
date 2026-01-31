@@ -37,20 +37,17 @@ export default function CreatePoolPage() {
 
   const ticketPrice = useMemo(() => {
     if (!depositBigInt) return null;
-    return depositBigInt / 100n;
+    return depositBigInt * 11n / 1000n;
   }, [depositBigInt]);
 
   const validate = useCallback((): string | null => {
     if (!deposit) return 'Enter a deposit amount.';
     const num = Number(deposit);
     if (isNaN(num) || num <= 0) return 'Invalid amount.';
-    if (num < 0.01) return 'Minimum deposit is 0.01 MON.';
-    if (num > 10000) return 'Maximum deposit is 10,000 MON.';
-    if (depositBigInt && depositBigInt % 100n !== 0n) {
-      return 'Deposit must be evenly divisible by 100 (for ticket pricing).';
-    }
+    if (num < 1) return 'Minimum deposit is 1 MON.';
+    if (num > 25000000) return 'Maximum deposit is 25,000,000 MON.';
     return null;
-  }, [deposit, depositBigInt]);
+  }, [deposit]);
 
   const handleSubmit = useCallback(() => {
     const validationError = validate();
@@ -132,12 +129,12 @@ export default function CreatePoolPage() {
                 placeholder="e.g. 1.0"
                 value={deposit}
                 onChange={(e) => { setDeposit(e.target.value); setError(''); }}
-                min="0.01"
-                max="10000"
+                min="1"
+                max="25000000"
                 step="0.01"
               />
               <p className={styles.hint}>
-                Min 0.01 MON, max 10,000 MON. Must be divisible by 100.
+                Min 1 MON, max 25,000,000 MON.
               </p>
             </div>
 
@@ -152,12 +149,20 @@ export default function CreatePoolPage() {
                   <span>100</span>
                 </div>
                 <div className={styles.previewRow}>
-                  <span>Prize Pool (90%)</span>
-                  <span>{formatMON(depositBigInt! * 90n / 100n)} MON</span>
+                  <span>Total Pool</span>
+                  <span>{formatMON(ticketPrice * 100n)} MON</span>
                 </div>
                 <div className={styles.previewRow}>
-                  <span>Creator Fee (8%)</span>
-                  <span>{formatMON(depositBigInt! * 8n / 100n)} MON</span>
+                  <span>Prize Pool</span>
+                  <span>{formatMON(depositBigInt!)} MON</span>
+                </div>
+                <div className={styles.previewRow}>
+                  <span>Protocol Fee (2%)</span>
+                  <span>{formatMON(ticketPrice * 100n * 2n / 100n)} MON</span>
+                </div>
+                <div className={styles.previewRow}>
+                  <span>Creator will claim</span>
+                  <span>{formatMON(ticketPrice * 100n - (ticketPrice * 100n * 2n / 100n))} MON</span>
                 </div>
               </div>
             )}

@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "MonadB2 - Lottery DApp",
+  title: "Port",
   description: "Decentralized lottery on Monad Testnet",
 };
 
