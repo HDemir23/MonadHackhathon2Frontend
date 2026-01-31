@@ -21,8 +21,8 @@
   align-items: center;
   gap: 0.375rem;
   padding: 0.625rem 1.25rem;
-  background-color: #836ef9;
-  color: #fff;
+  background-color: var(--color-primary);
+  color: #000; /* Text on primary should be black for contrast with neon green */
   border-radius: 8px;
   font-weight: 600;
   font-size: 0.9rem;
@@ -30,14 +30,14 @@
 }
 
 .createBtn:hover {
-  background-color: #6f58e0;
+  background-color: var(--color-primary-hover);
 }
 
 .tabs {
   display: flex;
   gap: 0.5rem;
   margin-bottom: 1.5rem;
-  border-bottom: 1px solid #2d3748;
+  border-bottom: 1px solid var(--color-border);
   padding-bottom: 0.75rem;
 }
 
@@ -45,22 +45,24 @@
   padding: 0.5rem 1rem;
   border: none;
   background: none;
-  color: #a0aec0;
+  color: var(--color-text-secondary);
   font-size: 0.9rem;
   font-weight: 500;
   cursor: pointer;
   border-radius: 6px;
-  transition: color 0.15s, background-color 0.15s;
+  transition:
+    color 0.15s,
+    background-color 0.15s;
 }
 
 .tab:hover {
-  color: #fff;
-  background-color: rgba(131, 110, 249, 0.1);
+  color: var(--color-text);
+  background-color: var(--color-primary-light);
 }
 
 .tabActive {
-  color: #fff;
-  background-color: rgba(131, 110, 249, 0.2);
+  color: var(--color-primary);
+  background-color: var(--color-primary-light);
 }
 
 .grid {
@@ -71,7 +73,7 @@
 
 .message {
   text-align: center;
-  color: #a0aec0;
+  color: var(--color-text-secondary);
   padding: 4rem 0;
   font-size: 1rem;
 }

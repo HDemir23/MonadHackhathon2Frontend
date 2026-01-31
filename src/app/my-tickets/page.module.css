@@ -8,11 +8,12 @@
   font-size: 1.75rem;
   font-weight: 700;
   margin-bottom: 2rem;
+  color: var(--color-text);
 }
 
 .message {
   text-align: center;
-  color: #a0aec0;
+  color: var(--color-text-secondary);
   padding: 4rem 0;
 }
 
@@ -27,14 +28,14 @@
   justify-content: space-between;
   align-items: center;
   padding: 1rem 1.25rem;
-  background-color: #1a1f2e;
-  border: 1px solid #2d3748;
+  background-color: var(--color-bg-card);
+  border: 1px solid var(--color-border);
   border-radius: 10px;
   transition: border-color 0.15s;
 }
 
 .poolRow:hover {
-  border-color: #836ef9;
+  border-color: var(--color-primary);
 }
 
 .poolInfo {
@@ -46,6 +47,7 @@
 .poolId {
   font-weight: 700;
   font-size: 1rem;
+  color: var(--color-text);
 }
 
 .badge {
@@ -57,26 +59,44 @@
   letter-spacing: 0.03em;
 }
 
-.open { background-color: rgba(72, 187, 120, 0.15); color: #48bb78; }
-.sold_out_waiting { background-color: rgba(237, 137, 54, 0.15); color: #ed8936; }
-.ready_to_reveal { background-color: rgba(131, 110, 249, 0.15); color: #836ef9; }
-.reveal_expired { background-color: rgba(245, 101, 101, 0.15); color: #f56565; }
-.revealed { background-color: rgba(66, 153, 225, 0.15); color: #4299e1; }
-.expired { background-color: rgba(160, 174, 192, 0.15); color: #a0aec0; }
+.open {
+  background-color: rgba(0, 255, 163, 0.15);
+  color: var(--color-open);
+}
+.sold_out_waiting {
+  background-color: rgba(255, 85, 0, 0.15);
+  color: var(--color-sold-out);
+}
+.ready_to_reveal {
+  background-color: rgba(0, 224, 255, 0.15);
+  color: var(--color-reveal);
+}
+.reveal_expired {
+  background-color: rgba(255, 0, 85, 0.15);
+  color: var(--color-error);
+}
+.revealed {
+  background-color: rgba(0, 224, 255, 0.15);
+  color: var(--color-revealed);
+}
+.expired {
+  background-color: rgba(85, 85, 85, 0.15);
+  color: var(--color-expired);
+}
 
 .poolMeta {
   display: flex;
   align-items: center;
   gap: 0.5rem;
   font-size: 0.85rem;
-  color: #a0aec0;
+  color: var(--color-text-secondary);
 }
 
 .dot {
   width: 3px;
   height: 3px;
   border-radius: 50%;
-  background-color: #4a5568;
+  background-color: var(--color-border);
 }
 
 @media (max-width: 640px) {

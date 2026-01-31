@@ -1,42 +1,52 @@
 :root {
   --max-width: 1100px;
   --border-radius: 12px;
-  --font-mono: ui-monospace, Menlo, Monaco, 'Cascadia Mono', 'Segoe UI Mono',
-    'Roboto Mono', 'Oxygen Mono', 'Ubuntu Monospace', 'Source Code Pro',
-    'Fira Mono', 'Droid Sans Mono', 'Courier New', monospace;
+  --font-mono: ui-monospace, Menlo, Monaco, "Cascadia Mono", "Segoe UI Mono", "Roboto Mono", "Oxygen Mono", "Ubuntu Monospace", "Source Code Pro", "Fira Mono", "Droid Sans Mono", "Courier New", monospace;
 
-  /* Brand */
-  --color-primary: #836ef9;
-  --color-primary-hover: #6f58e0;
+  /* Brand - Ocean Teal */
+  --color-primary: #2dd4bf;
+  --color-primary-hover: #14b8a6;
+  --color-primary-light: rgba(45, 212, 191, 0.1);
 
   /* Backgrounds */
-  --color-bg: #0f172a;
-  --color-bg-card: #1a1f2e;
-  --color-bg-elevated: #2d3748;
+  --color-bg: #020617; /* Slate 950 */
+  --color-bg-card: #0f172a; /* Slate 900 */
+  --color-bg-elevated: #1e293b; /* Slate 800 */
 
   /* Text */
-  --color-text: #ffffff;
-  --color-text-secondary: #a0aec0;
-  --color-text-muted: #4a5568;
+  --color-text: #f8fafc;
+  --color-text-secondary: #94a3b8;
+  --color-text-muted: #64748b;
 
   /* Borders */
-  --color-border: #2d3748;
+  --color-border: #334155;
+  --color-border-hover: #475569;
 
   /* Status */
-  --color-open: #48bb78;
-  --color-sold-out: #ed8936;
-  --color-reveal: #836ef9;
-  --color-revealed: #4299e1;
-  --color-expired: #a0aec0;
-  --color-error: #f56565;
+  --color-open: #2dd4bf;
+  --color-sold-out: #f472b6; /* Pink */
+  --color-reveal: #38bdf8;
+  --color-revealed: #38bdf8;
+  --color-expired: #475569;
+  --color-error: #fb7185;
 
   /* Tiers */
-  --color-tier-5: #f6e05e;
-  --color-tier-4: #ed8936;
-  --color-tier-3: #4299e1;
-  --color-tier-2: #48bb78;
-  --color-tier-1: #718096;
+  --color-tier-5: #fbbf24;
+  --color-tier-4: #fb923c;
+  --color-tier-3: #38bdf8;
+  --color-tier-2: #2dd4bf;
+  --color-tier-1: #94a3b8;
 }
+
+
+
+
+
+
+
+
+
+
 
 * {
   box-sizing: border-box;
@@ -66,7 +76,8 @@ button {
   font-family: inherit;
 }
 
-input, select {
+input,
+select {
   font-family: inherit;
 }
 

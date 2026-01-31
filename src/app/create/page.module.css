@@ -8,11 +8,12 @@
   font-size: 1.75rem;
   font-weight: 700;
   margin-bottom: 2rem;
+  color: var(--color-text);
 }
 
 .message {
   text-align: center;
-  color: #a0aec0;
+  color: var(--color-text-secondary);
   padding: 4rem 0;
 }
 
@@ -31,36 +32,36 @@
 .label {
   font-size: 0.9rem;
   font-weight: 600;
-  color: #e2e8f0;
+  color: var(--color-text);
 }
 
 .input {
   padding: 0.75rem 1rem;
-  background-color: #1a1f2e;
-  border: 1px solid #2d3748;
+  background-color: var(--color-bg-card);
+  border: 1px solid var(--color-border);
   border-radius: 8px;
-  color: #fff;
+  color: var(--color-text);
   font-size: 1rem;
   outline: none;
   transition: border-color 0.15s;
 }
 
 .input:focus {
-  border-color: #836ef9;
+  border-color: var(--color-primary);
 }
 
 .input::placeholder {
-  color: #4a5568;
+  color: var(--color-text-muted);
 }
 
 .hint {
   font-size: 0.8rem;
-  color: #a0aec0;
+  color: var(--color-text-secondary);
 }
 
 .preview {
-  background-color: #1a1f2e;
-  border: 1px solid #2d3748;
+  background-color: var(--color-bg-card);
+  border: 1px solid var(--color-border);
   border-radius: 8px;
   padding: 1rem;
   display: flex;
@@ -75,22 +76,23 @@
 }
 
 .previewRow span:first-child {
-  color: #a0aec0;
+  color: var(--color-text-secondary);
 }
 
 .previewRow span:last-child {
   font-weight: 600;
+  color: var(--color-text);
 }
 
 .error {
-  color: #f56565;
+  color: var(--color-error);
   font-size: 0.9rem;
 }
 
 .submitBtn {
   padding: 0.75rem 1.5rem;
-  background-color: #836ef9;
-  color: #fff;
+  background-color: var(--color-primary);
+  color: #000;
   border: none;
   border-radius: 8px;
   font-weight: 600;
@@ -100,7 +102,7 @@
 }
 
 .submitBtn:hover:not(:disabled) {
-  background-color: #6f58e0;
+  background-color: var(--color-primary-hover);
 }
 
 .submitBtn:disabled {
@@ -109,11 +111,11 @@
 }
 
 .warning {
-  background-color: rgba(237, 137, 54, 0.1);
-  border: 1px solid rgba(237, 137, 54, 0.3);
+  background-color: rgba(255, 85, 0, 0.1);
+  border: 1px solid rgba(255, 85, 0, 0.3);
   border-radius: 8px;
   padding: 0.75rem 1rem;
   font-size: 0.85rem;
-  color: #ed8936;
+  color: var(--color-sold-out);
   line-height: 1.5;
 }

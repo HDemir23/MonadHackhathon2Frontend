@@ -15,6 +15,7 @@
   font-size: 1.75rem;
   font-weight: 700;
   margin-bottom: 0.5rem;
+  color: var(--color-text);
 }
 
 .badge {
@@ -27,32 +28,52 @@
   letter-spacing: 0.03em;
 }
 
-.open { background-color: rgba(72, 187, 120, 0.15); color: #48bb78; }
-.sold_out_waiting { background-color: rgba(237, 137, 54, 0.15); color: #ed8936; }
-.ready_to_reveal { background-color: rgba(131, 110, 249, 0.15); color: #836ef9; }
-.reveal_expired { background-color: rgba(245, 101, 101, 0.15); color: #f56565; }
-.revealed { background-color: rgba(66, 153, 225, 0.15); color: #4299e1; }
-.expired { background-color: rgba(160, 174, 192, 0.15); color: #a0aec0; }
+.open {
+  background-color: rgba(0, 255, 163, 0.15);
+  color: var(--color-open);
+}
+.sold_out_waiting {
+  background-color: rgba(255, 85, 0, 0.15);
+  color: var(--color-sold-out);
+}
+.ready_to_reveal {
+  background-color: rgba(0, 224, 255, 0.15);
+  color: var(--color-reveal);
+}
+.reveal_expired {
+  background-color: rgba(255, 0, 85, 0.15);
+  color: var(--color-error);
+}
+.revealed {
+  background-color: rgba(0, 224, 255, 0.15);
+  color: var(--color-revealed);
+}
+.expired {
+  background-color: rgba(85, 85, 85, 0.15);
+  color: var(--color-expired);
+}
 
 .refreshBtn {
   padding: 0.5rem 1rem;
   background: none;
-  border: 1px solid #2d3748;
-  color: #a0aec0;
+  border: 1px solid var(--color-border);
+  color: var(--color-text-secondary);
   border-radius: 6px;
   cursor: pointer;
   font-size: 0.85rem;
-  transition: border-color 0.15s, color 0.15s;
+  transition:
+    border-color 0.15s,
+    color 0.15s;
 }
 
 .refreshBtn:hover {
-  border-color: #836ef9;
-  color: #fff;
+  border-color: var(--color-primary);
+  color: var(--color-text);
 }
 
 .message {
   text-align: center;
-  color: #a0aec0;
+  color: var(--color-text-secondary);
   padding: 4rem 0;
 }
 
@@ -64,8 +85,8 @@
 }
 
 .infoItem {
-  background-color: #1a1f2e;
-  border: 1px solid #2d3748;
+  background-color: var(--color-bg-card);
+  border: 1px solid var(--color-border);
   border-radius: 8px;
   padding: 1rem;
 }
@@ -73,18 +94,19 @@
 .infoLabel {
   display: block;
   font-size: 0.8rem;
-  color: #a0aec0;
+  color: var(--color-text-secondary);
   margin-bottom: 0.25rem;
 }
 
 .infoValue {
   font-size: 1.1rem;
   font-weight: 600;
+  color: var(--color-text);
 }
 
 .section {
-  background-color: #1a1f2e;
-  border: 1px solid #2d3748;
+  background-color: var(--color-bg-card);
+  border: 1px solid var(--color-border);
   border-radius: 12px;
   padding: 1.5rem;
   margin-bottom: 1.5rem;
@@ -94,6 +116,7 @@
   font-size: 1.1rem;
   font-weight: 600;
   margin-bottom: 1rem;
+  color: var(--color-text);
 }
 
 /* Ticket Grid */
@@ -122,32 +145,47 @@
 }
 
 .ticketAvailable {
-  background-color: #2d3748;
-  color: #a0aec0;
+  background-color: var(--color-border);
+  color: var(--color-text-secondary);
 }
 
 .ticketSold {
-  background-color: #4a5568;
-  color: #e2e8f0;
+  background-color: var(--color-bg-elevated);
+  color: var(--color-text);
 }
 
 .ticketYours {
-  background-color: #836ef9;
-  color: #fff;
+  background-color: var(--color-primary);
+  color: #000;
 }
 
 /* Tier colors on revealed tickets */
-.tier5 { background-color: #f6e05e; color: #1a202c; }
-.tier4 { background-color: #ed8936; color: #1a202c; }
-.tier3 { background-color: #4299e1; color: #fff; }
-.tier2 { background-color: #48bb78; color: #1a202c; }
-.tier1 { background-color: #718096; color: #fff; }
+.tier5 {
+  background-color: var(--color-tier-5);
+  color: #000;
+}
+.tier4 {
+  background-color: var(--color-tier-4);
+  color: #000;
+}
+.tier3 {
+  background-color: var(--color-tier-3);
+  color: #000;
+}
+.tier2 {
+  background-color: var(--color-tier-2);
+  color: #000;
+}
+.tier1 {
+  background-color: var(--color-tier-1);
+  color: #000;
+}
 
 .legend {
   display: flex;
   gap: 1.25rem;
   font-size: 0.8rem;
-  color: #a0aec0;
+  color: var(--color-text-secondary);
 }
 
 .legendDot {
@@ -159,9 +197,15 @@
   vertical-align: middle;
 }
 
-.legendAvailable { background-color: #2d3748; }
-.legendSold { background-color: #4a5568; }
-.legendYours { background-color: #836ef9; }
+.legendAvailable {
+  background-color: var(--color-border);
+}
+.legendSold {
+  background-color: var(--color-bg-elevated);
+}
+.legendYours {
+  background-color: var(--color-primary);
+}
 
 /* Buy section */
 .buyRow {
@@ -176,27 +220,28 @@
   align-items: center;
   gap: 0.5rem;
   font-size: 0.9rem;
-  color: #a0aec0;
+  color: var(--color-text-secondary);
 }
 
 .select {
   padding: 0.375rem 0.625rem;
-  background-color: #2d3748;
-  border: 1px solid #4a5568;
+  background-color: var(--color-border);
+  border: 1px solid var(--color-border);
   border-radius: 6px;
-  color: #fff;
+  color: var(--color-text);
   font-size: 0.9rem;
 }
 
 .buyTotal {
   font-weight: 600;
   font-size: 0.95rem;
+  color: var(--color-text);
 }
 
 .actionBtn {
   padding: 0.625rem 1.5rem;
-  background-color: #836ef9;
-  color: #fff;
+  background-color: var(--color-primary);
+  color: #000;
   border: none;
   border-radius: 8px;
   font-weight: 600;
@@ -206,7 +251,7 @@
 }
 
 .actionBtn:hover:not(:disabled) {
-  background-color: #6f58e0;
+  background-color: var(--color-primary-hover);
 }
 
 .actionBtn:disabled {
@@ -216,23 +261,23 @@
 
 .secondaryBtn {
   background-color: transparent;
-  border: 1px solid #836ef9;
-  color: #836ef9;
+  border: 1px solid var(--color-primary);
+  color: var(--color-primary);
   margin-left: 0.75rem;
 }
 
 .secondaryBtn:hover:not(:disabled) {
-  background-color: rgba(131, 110, 249, 0.1);
+  background-color: var(--color-primary-light);
 }
 
 .hint {
-  color: #a0aec0;
+  color: var(--color-text-secondary);
   font-size: 0.85rem;
   margin-top: 0.5rem;
 }
 
 .error {
-  color: #f56565;
+  color: var(--color-error);
   font-size: 0.9rem;
   word-break: break-word;
 }
@@ -250,16 +295,31 @@
   justify-content: space-between;
   align-items: center;
   padding: 0.5rem 0.75rem;
-  background-color: #2d3748;
+  background-color: var(--color-border);
   border-radius: 6px;
   font-size: 0.9rem;
 }
 
-.tierBadge5 { color: #f6e05e; font-weight: 600; }
-.tierBadge4 { color: #ed8936; font-weight: 600; }
-.tierBadge3 { color: #4299e1; font-weight: 600; }
-.tierBadge2 { color: #48bb78; font-weight: 600; }
-.tierBadge1 { color: #718096; font-weight: 600; }
+.tierBadge5 {
+  color: var(--color-tier-5);
+  font-weight: 600;
+}
+.tierBadge4 {
+  color: var(--color-tier-4);
+  font-weight: 600;
+}
+.tierBadge3 {
+  color: var(--color-tier-3);
+  font-weight: 600;
+}
+.tierBadge2 {
+  color: var(--color-tier-2);
+  font-weight: 600;
+}
+.tierBadge1 {
+  color: var(--color-tier-1);
+  font-weight: 600;
+}
 
 @media (max-width: 640px) {
   .main {
