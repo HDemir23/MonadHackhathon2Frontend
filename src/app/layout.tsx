@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Port",
+  title: "Port6",
   description: "Decentralized lottery on Monad Testnet",
 };
 

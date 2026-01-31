@@ -13,7 +13,7 @@ export function Header() {
     <header className={styles.header}>
       <Link href="/" className={styles.logo}>
         <Image src="/port.png" alt="Port" width={32} height={32} className={styles.logoIcon} />
-        Port
+        Port6
       </Link>
       <nav className={styles.nav}>
         <Link
