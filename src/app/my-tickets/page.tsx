@@ -30,7 +30,7 @@ export default function MyTicketsPage() {
 
   const { data: ticketCounts } = useReadContracts({
     contracts: ticketCountCalls,
-    query: { enabled: !!address && pools.length > 0 },
+    query: { enabled: !!address && pools.length > 0, staleTime: 30_000 },
   });
 
   const userPools = useMemo(() => {

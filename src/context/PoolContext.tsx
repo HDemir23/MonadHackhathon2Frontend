@@ -2,6 +2,8 @@
 
 import { createContext, useContext, useMemo, useCallback, useEffect, useState, useRef } from 'react';
 import { useReadContract, useBlockNumber, useBlock } from 'wagmi';
+
+const POLL_INTERVAL = 30_000; // 30 seconds
 import { CONTRACT_ADDRESS, CONTRACT_ABI } from '@/lib/contract';
 import type { Pool } from '@/lib/types';
 
@@ -30,10 +32,11 @@ export function PoolProvider({ children }: { children: React.ReactNode }) {
     address: CONTRACT_ADDRESS,
     abi: CONTRACT_ABI,
     functionName: 'poolIdCounter',
+    query: { staleTime: POLL_INTERVAL },
   });
 
-  const { data: blockNumber } = useBlockNumber({ watch: { poll: true, pollingInterval: 12_000 } });
-  const { data: block } = useBlock({ watch: { poll: true, pollingInterval: 12_000 } });
+  const { data: blockNumber } = useBlockNumber({ watch: { poll: true, pollingInterval: POLL_INTERVAL } });
+  const { data: block } = useBlock({ watch: { poll: true, pollingInterval: POLL_INTERVAL } });
 
   const currentBlock = blockNumber ?? 0n;
   const currentTimestamp = block?.timestamp ?? 0n;
@@ -125,9 +128,9 @@ export function PoolProvider({ children }: { children: React.ReactNode }) {
             });
           }
 
-          // Small delay between batches to respect rate limits
+          // Delay between batches to respect rate limits
           if (batchEnd < count) {
-            await new Promise((resolve) => setTimeout(resolve, 250));
+            await new Promise((resolve) => setTimeout(resolve, 500));
           }
         } catch (error) {
           console.error(`Error fetching batch ${i}-${batchEnd}:`, error);

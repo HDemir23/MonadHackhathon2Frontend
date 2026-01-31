@@ -162,6 +162,7 @@ export default function PoolDetailPage({
 
   const { data: ticketOwners } = useReadContracts({
     contracts: ticketOwnerCalls,
+    query: { staleTime: 30_000 },
   });
 
   // Tier data (only after reveal)
@@ -180,7 +181,7 @@ export default function PoolDetailPage({
 
   const { data: tierData } = useReadContracts({
     contracts: tierCalls,
-    query: { enabled: !!pool?.isRevealed },
+    query: { enabled: !!pool?.isRevealed, staleTime: 30_000 },
   });
 
   // User's ticket IDs

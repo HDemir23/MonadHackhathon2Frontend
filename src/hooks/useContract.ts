@@ -1,12 +1,16 @@
+import { useCallback } from 'react';
 import { useReadContract } from 'wagmi';
 import { CONTRACT_ADDRESS, CONTRACT_ABI } from '@/lib/contract';
 import type { Pool } from '@/lib/types';
+
+const STALE_TIME = 30_000; // 30 seconds
 
 export function usePoolCount() {
   return useReadContract({
     address: CONTRACT_ADDRESS,
     abi: CONTRACT_ABI,
     functionName: 'poolIdCounter',
+    query: { staleTime: STALE_TIME },
   });
 }
 
@@ -16,6 +20,7 @@ export function usePoolDetails(poolId: number) {
     abi: CONTRACT_ABI,
     functionName: 'getPoolDetails',
     args: [BigInt(poolId)],
+    query: { staleTime: STALE_TIME },
   });
 
   const createdAt = useReadContract({
@@ -23,6 +28,7 @@ export function usePoolDetails(poolId: number) {
     abi: CONTRACT_ABI,
     functionName: 'getPoolCreatedAt',
     args: [BigInt(poolId)],
+    query: { staleTime: STALE_TIME },
   });
 
   let pool: Pool | undefined;
@@ -42,10 +48,15 @@ export function usePoolDetails(poolId: number) {
     };
   }
 
+  const refetch = useCallback(() => {
+    details.refetch();
+    createdAt.refetch();
+  }, [details.refetch, createdAt.refetch]);
+
   return {
     pool,
     isLoading: details.isLoading || createdAt.isLoading,
-    refetch: () => { details.refetch(); createdAt.refetch(); },
+    refetch,
   };
 }
 
@@ -55,6 +66,6 @@ export function useTicketsBoughtBy(poolId: number, address: `0x${string}` | unde
     abi: CONTRACT_ABI,
     functionName: 'getTicketsBoughtBy',
     args: address ? [BigInt(poolId), address] : undefined,
-    query: { enabled: !!address },
+    query: { enabled: !!address, staleTime: STALE_TIME },
   });
 }
