@@ -144,45 +144,66 @@ export default function PoolDetailPage({
     isSuccess: isCreatorRefundSuccess,
   } = useWaitForTransactionReceipt({ hash: creatorRefundHash });
 
-  // Ticket owner data for grid
+  // Ticket owner data for grid — only query sold tickets
+  const soldCount = pool?.ticketsSold ?? 0;
   const ticketIds = useMemo(
     () => Array.from({ length: 100 }, (_, i) => i),
     [],
   );
   const ticketOwnerCalls = useMemo(
     () =>
-      ticketIds.map((ticketId) => ({
+      ticketIds.slice(0, soldCount).map((ticketId) => ({
         address: CONTRACT_ADDRESS as `0x${string}`,
         abi: CONTRACT_ABI,
         functionName: "getTicketOwner" as const,
         args: [BigInt(poolId), BigInt(ticketId)],
       })),
-    [poolId, ticketIds],
+    [poolId, ticketIds, soldCount],
   );
 
-  const { data: ticketOwners } = useReadContracts({
+  const { data: ticketOwnersRaw } = useReadContracts({
     contracts: ticketOwnerCalls,
-    query: { staleTime: 30_000 },
+    query: { enabled: soldCount > 0, staleTime: 30_000 },
   });
 
-  // Tier data (only after reveal)
+  // Pad to 100 entries so indices stay aligned with ticketIds
+  const ticketOwners = useMemo(() => {
+    if (!ticketOwnersRaw) return undefined;
+    const padded = [...ticketOwnersRaw];
+    for (let i = padded.length; i < 100; i++) {
+      padded.push({ status: 'success' as const, result: '0x0000000000000000000000000000000000000000' });
+    }
+    return padded;
+  }, [ticketOwnersRaw]);
+
+  // Tier data (only after reveal) — only query sold tickets
   const tierCalls = useMemo(
     () =>
       pool?.isRevealed
-        ? ticketIds.map((ticketId) => ({
+        ? ticketIds.slice(0, soldCount).map((ticketId) => ({
             address: CONTRACT_ADDRESS as `0x${string}`,
             abi: CONTRACT_ABI,
             functionName: "getWinnerTier" as const,
             args: [BigInt(poolId), BigInt(ticketId)],
           }))
         : [],
-    [pool?.isRevealed, poolId, ticketIds],
+    [pool?.isRevealed, poolId, ticketIds, soldCount],
   );
 
-  const { data: tierData } = useReadContracts({
+  const { data: tierDataRaw } = useReadContracts({
     contracts: tierCalls,
     query: { enabled: !!pool?.isRevealed, staleTime: 30_000 },
   });
+
+  // Pad tier data to 100 entries
+  const tierData = useMemo(() => {
+    if (!tierDataRaw) return undefined;
+    const padded = [...tierDataRaw];
+    for (let i = padded.length; i < 100; i++) {
+      padded.push({ status: 'success' as const, result: 0n });
+    }
+    return padded;
+  }, [tierDataRaw]);
 
   // User's ticket IDs
   const userTicketIds = useMemo(() => {
