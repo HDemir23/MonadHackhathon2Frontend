@@ -1,0 +1,114 @@
+.card {
+  display: block;
+  background-color: #1a1f2e;
+  border: 1px solid #2d3748;
+  border-radius: 12px;
+  padding: 1.25rem;
+  transition: border-color 0.15s, transform 0.15s;
+  cursor: pointer;
+}
+
+.card:hover {
+  border-color: #836ef9;
+  transform: translateY(-2px);
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.poolId {
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.25rem 0.625rem;
+  border-radius: 999px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.open {
+  background-color: rgba(72, 187, 120, 0.15);
+  color: #48bb78;
+}
+
+.sold_out_waiting {
+  background-color: rgba(237, 137, 54, 0.15);
+  color: #ed8936;
+}
+
+.ready_to_reveal {
+  background-color: rgba(131, 110, 249, 0.15);
+  color: #836ef9;
+}
+
+.reveal_expired {
+  background-color: rgba(245, 101, 101, 0.15);
+  color: #f56565;
+}
+
+.revealed {
+  background-color: rgba(66, 153, 225, 0.15);
+  color: #4299e1;
+}
+
+.expired {
+  background-color: rgba(160, 174, 192, 0.15);
+  color: #a0aec0;
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+}
+
+.label {
+  color: #a0aec0;
+  font-size: 0.85rem;
+}
+
+.value {
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.progressSection {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.progressLabel {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  color: #a0aec0;
+}
+
+.progressBar {
+  height: 6px;
+  background-color: #2d3748;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background-color: #836ef9;
+  border-radius: 3px;
+  transition: width 0.3s;
+}

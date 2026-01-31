@@ -1,0 +1,92 @@
+.main {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-bottom: 2rem;
+}
+
+.message {
+  text-align: center;
+  color: #a0aec0;
+  padding: 4rem 0;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.poolRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.25rem;
+  background-color: #1a1f2e;
+  border: 1px solid #2d3748;
+  border-radius: 10px;
+  transition: border-color 0.15s;
+}
+
+.poolRow:hover {
+  border-color: #836ef9;
+}
+
+.poolInfo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.poolId {
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.badge {
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.2rem 0.5rem;
+  border-radius: 999px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.open { background-color: rgba(72, 187, 120, 0.15); color: #48bb78; }
+.sold_out_waiting { background-color: rgba(237, 137, 54, 0.15); color: #ed8936; }
+.ready_to_reveal { background-color: rgba(131, 110, 249, 0.15); color: #836ef9; }
+.reveal_expired { background-color: rgba(245, 101, 101, 0.15); color: #f56565; }
+.revealed { background-color: rgba(66, 153, 225, 0.15); color: #4299e1; }
+.expired { background-color: rgba(160, 174, 192, 0.15); color: #a0aec0; }
+
+.poolMeta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: #a0aec0;
+}
+
+.dot {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background-color: #4a5568;
+}
+
+@media (max-width: 640px) {
+  .main {
+    padding: 1rem;
+  }
+
+  .poolRow {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+}

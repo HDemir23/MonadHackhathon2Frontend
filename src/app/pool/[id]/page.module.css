@@ -1,0 +1,280 @@
+.main {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 2rem;
+}
+
+.title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.badge {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.25rem 0.625rem;
+  border-radius: 999px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.open { background-color: rgba(72, 187, 120, 0.15); color: #48bb78; }
+.sold_out_waiting { background-color: rgba(237, 137, 54, 0.15); color: #ed8936; }
+.ready_to_reveal { background-color: rgba(131, 110, 249, 0.15); color: #836ef9; }
+.reveal_expired { background-color: rgba(245, 101, 101, 0.15); color: #f56565; }
+.revealed { background-color: rgba(66, 153, 225, 0.15); color: #4299e1; }
+.expired { background-color: rgba(160, 174, 192, 0.15); color: #a0aec0; }
+
+.refreshBtn {
+  padding: 0.5rem 1rem;
+  background: none;
+  border: 1px solid #2d3748;
+  color: #a0aec0;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.refreshBtn:hover {
+  border-color: #836ef9;
+  color: #fff;
+}
+
+.message {
+  text-align: center;
+  color: #a0aec0;
+  padding: 4rem 0;
+}
+
+.infoGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.infoItem {
+  background-color: #1a1f2e;
+  border: 1px solid #2d3748;
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+.infoLabel {
+  display: block;
+  font-size: 0.8rem;
+  color: #a0aec0;
+  margin-bottom: 0.25rem;
+}
+
+.infoValue {
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.section {
+  background-color: #1a1f2e;
+  border: 1px solid #2d3748;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.sectionTitle {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+/* Ticket Grid */
+.ticketGrid {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap: 4px;
+  margin-bottom: 0.75rem;
+}
+
+.ticket {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  font-weight: 600;
+  border-radius: 4px;
+  cursor: default;
+  transition: transform 0.1s;
+}
+
+.ticket:hover {
+  transform: scale(1.15);
+  z-index: 1;
+}
+
+.ticketAvailable {
+  background-color: #2d3748;
+  color: #a0aec0;
+}
+
+.ticketSold {
+  background-color: #4a5568;
+  color: #e2e8f0;
+}
+
+.ticketYours {
+  background-color: #836ef9;
+  color: #fff;
+}
+
+/* Tier colors on revealed tickets */
+.tier5 { background-color: #f6e05e; color: #1a202c; }
+.tier4 { background-color: #ed8936; color: #1a202c; }
+.tier3 { background-color: #4299e1; color: #fff; }
+.tier2 { background-color: #48bb78; color: #1a202c; }
+.tier1 { background-color: #718096; color: #fff; }
+
+.legend {
+  display: flex;
+  gap: 1.25rem;
+  font-size: 0.8rem;
+  color: #a0aec0;
+}
+
+.legendDot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  margin-right: 0.375rem;
+  vertical-align: middle;
+}
+
+.legendAvailable { background-color: #2d3748; }
+.legendSold { background-color: #4a5568; }
+.legendYours { background-color: #836ef9; }
+
+/* Buy section */
+.buyRow {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.buyLabel {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  color: #a0aec0;
+}
+
+.select {
+  padding: 0.375rem 0.625rem;
+  background-color: #2d3748;
+  border: 1px solid #4a5568;
+  border-radius: 6px;
+  color: #fff;
+  font-size: 0.9rem;
+}
+
+.buyTotal {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.actionBtn {
+  padding: 0.625rem 1.5rem;
+  background-color: #836ef9;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.actionBtn:hover:not(:disabled) {
+  background-color: #6f58e0;
+}
+
+.actionBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.secondaryBtn {
+  background-color: transparent;
+  border: 1px solid #836ef9;
+  color: #836ef9;
+  margin-left: 0.75rem;
+}
+
+.secondaryBtn:hover:not(:disabled) {
+  background-color: rgba(131, 110, 249, 0.1);
+}
+
+.hint {
+  color: #a0aec0;
+  font-size: 0.85rem;
+  margin-top: 0.5rem;
+}
+
+.error {
+  color: #f56565;
+  font-size: 0.9rem;
+  word-break: break-word;
+}
+
+/* Ticket list for claim section */
+.ticketList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.ticketListItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0.75rem;
+  background-color: #2d3748;
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+
+.tierBadge5 { color: #f6e05e; font-weight: 600; }
+.tierBadge4 { color: #ed8936; font-weight: 600; }
+.tierBadge3 { color: #4299e1; font-weight: 600; }
+.tierBadge2 { color: #48bb78; font-weight: 600; }
+.tierBadge1 { color: #718096; font-weight: 600; }
+
+@media (max-width: 640px) {
+  .main {
+    padding: 1rem;
+  }
+
+  .ticketGrid {
+    gap: 2px;
+  }
+
+  .ticket {
+    font-size: 0.6rem;
+  }
+
+  .infoGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
