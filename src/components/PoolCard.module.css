@@ -1,25 +1,49 @@
 .card {
   display: block;
   background-color: var(--color-bg-card);
-  border: 1px solid var(--color-border);
-  border-radius: 12px;
-  padding: 1.25rem;
+  border: 1px solid var(--color-border-hover);
+  border-radius: 14px;
+  padding: 1.5rem;
   transition:
-    border-color 0.15s,
-    transform 0.15s;
+    border-color 0.25s,
+    transform 0.25s var(--ease-out-expo),
+    box-shadow 0.25s;
   cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--gradient-primary);
+  opacity: 0;
+  transition: opacity 0.25s;
 }
 
 .card:hover {
-  border-color: var(--color-primary);
-  transform: translateY(-2px);
+  border-color: transparent;
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-card-hover);
+  background-image: linear-gradient(var(--color-bg-card), var(--color-bg-card)),
+    var(--gradient-primary);
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+}
+
+.card:hover::before {
+  opacity: 1;
 }
 
 .cardHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1rem;
+  margin-bottom: 1.25rem;
 }
 
 .poolId {
@@ -28,50 +52,11 @@
   color: var(--color-text);
 }
 
-.badge {
-  font-size: 0.75rem;
-  font-weight: 600;
-  padding: 0.25rem 0.625rem;
-  border-radius: 999px;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-}
-
-.open {
-  background-color: rgba(0, 255, 163, 0.15);
-  color: var(--color-open);
-}
-
-.sold_out_waiting {
-  background-color: rgba(255, 85, 0, 0.15);
-  color: var(--color-sold-out);
-}
-
-.ready_to_reveal {
-  background-color: rgba(0, 224, 255, 0.15);
-  color: var(--color-reveal);
-}
-
-.reveal_expired {
-  background-color: rgba(255, 0, 85, 0.15);
-  color: var(--color-error);
-}
-
-.revealed {
-  background-color: rgba(0, 224, 255, 0.15);
-  color: var(--color-revealed);
-}
-
-.expired {
-  background-color: rgba(85, 85, 85, 0.15);
-  color: var(--color-expired);
-}
-
 .info {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
+  gap: 0.625rem;
+  margin-bottom: 1.25rem;
 }
 
 .row {
@@ -93,7 +78,7 @@
 .progressSection {
   display: flex;
   flex-direction: column;
-  gap: 0.375rem;
+  gap: 0.5rem;
 }
 
 .progressLabel {
@@ -101,18 +86,4 @@
   justify-content: space-between;
   font-size: 0.8rem;
   color: var(--color-text-secondary);
-}
-
-.progressBar {
-  height: 6px;
-  background-color: var(--color-border);
-  border-radius: 3px;
-  overflow: hidden;
-}
-
-.progressFill {
-  height: 100%;
-  background-color: var(--color-primary);
-  border-radius: 3px;
-  transition: width 0.3s;
 }

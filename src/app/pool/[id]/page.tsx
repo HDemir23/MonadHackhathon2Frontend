@@ -11,13 +11,15 @@ import {
 import { CONTRACT_ADDRESS, CONTRACT_ABI } from "@/lib/contract";
 import { usePoolDetails, useTicketsBoughtBy } from "@/hooks/useContract";
 import { usePoolContext } from "@/context/PoolContext";
-import {
-  getPoolStatus,
-  formatMON,
-  shortenAddress,
-  STATUS_LABELS,
-  tierLabel,
-} from "@/lib/utils";
+import { getPoolStatus } from "@/lib/utils";
+import { SkeletonLoader } from "@/components/ui/SkeletonLoader";
+import { SectionCard } from "@/components/ui/SectionCard";
+import { PoolInfoHeader } from "@/components/pool/PoolInfoHeader";
+import { TicketGrid } from "@/components/pool/TicketGrid";
+import { BuySection } from "@/components/pool/BuySection";
+import { RevealSection } from "@/components/pool/RevealSection";
+import { ClaimSection } from "@/components/pool/ClaimSection";
+import { RefundSection } from "@/components/pool/RefundSection";
 import styles from "./page.module.css";
 
 export default function PoolDetailPage({
@@ -38,11 +40,9 @@ export default function PoolDetailPage({
   const { data: ticketsBought } = useTicketsBoughtBy(poolId, address);
   const userTicketCount = ticketsBought ? Number(ticketsBought) : 0;
 
-  const [quantity, setQuantity] = useState(1);
   const [txError, setTxError] = useState<string | null>(null);
   const [refundingAll, setRefundingAll] = useState(false);
   const [refundProgress, setRefundProgress] = useState("");
-  const maxBuyable = 10 - userTicketCount;
 
   const status = pool
     ? getPoolStatus(pool, currentBlock, currentTimestamp)
@@ -57,41 +57,40 @@ export default function PoolDetailPage({
     mutation: { onError: onTxError },
   });
   const { isLoading: isBuyPending, isSuccess: isBuySuccess } =
-    useWaitForTransactionReceipt({
-      hash: buyHash,
-    });
+    useWaitForTransactionReceipt({ hash: buyHash });
 
-  const handleBuy = useCallback(() => {
-    if (!pool) return;
-    setTxError(null);
-    const value = pool.ticketPrice * BigInt(quantity);
-    if (quantity === 1) {
-      writeBuy({
-        address: CONTRACT_ADDRESS,
-        abi: CONTRACT_ABI,
-        functionName: "buyTicket",
-        args: [BigInt(poolId)],
-        value,
-      });
-    } else {
-      writeBuy({
-        address: CONTRACT_ADDRESS,
-        abi: CONTRACT_ABI,
-        functionName: "buyTickets",
-        args: [BigInt(poolId), BigInt(quantity)],
-        value,
-      });
-    }
-  }, [pool, poolId, quantity, writeBuy]);
+  const handleBuy = useCallback(
+    (quantity: number) => {
+      if (!pool) return;
+      setTxError(null);
+      const value = pool.ticketPrice * BigInt(quantity);
+      if (quantity === 1) {
+        writeBuy({
+          address: CONTRACT_ADDRESS,
+          abi: CONTRACT_ABI,
+          functionName: "buyTicket",
+          args: [BigInt(poolId)],
+          value,
+        });
+      } else {
+        writeBuy({
+          address: CONTRACT_ADDRESS,
+          abi: CONTRACT_ABI,
+          functionName: "buyTickets",
+          args: [BigInt(poolId), BigInt(quantity)],
+          value,
+        });
+      }
+    },
+    [pool, poolId, writeBuy],
+  );
 
   // Reveal winners (creator only)
   const { writeContract: writeReveal, data: revealHash } = useWriteContract({
     mutation: { onError: onTxError },
   });
   const { isLoading: isRevealPending, isSuccess: isRevealSuccess } =
-    useWaitForTransactionReceipt({
-      hash: revealHash,
-    });
+    useWaitForTransactionReceipt({ hash: revealHash });
 
   const handleReveal = useCallback(() => {
     setTxError(null);
@@ -115,9 +114,7 @@ export default function PoolDetailPage({
     mutation: { onError: onTxError },
   });
   const { isLoading: isClaimPending, isSuccess: isClaimSuccess } =
-    useWaitForTransactionReceipt({
-      hash: claimHash,
-    });
+    useWaitForTransactionReceipt({ hash: claimHash });
 
   // Creator withdraw
   const { writeContract: writeCreatorWithdraw, data: creatorWithdrawHash } =
@@ -125,28 +122,33 @@ export default function PoolDetailPage({
   const {
     isLoading: isCreatorWithdrawPending,
     isSuccess: isCreatorWithdrawSuccess,
-  } = useWaitForTransactionReceipt({
-    hash: creatorWithdrawHash,
-  });
+  } = useWaitForTransactionReceipt({ hash: creatorWithdrawHash });
 
   // Ticket refund
-  const { writeContractAsync: writeTicketRefundAsync, data: ticketRefundHash } =
-    useWriteContract({ mutation: { onError: onTxError } });
-  const { isLoading: isTicketRefundPending, isSuccess: isTicketRefundSuccess } =
-    useWaitForTransactionReceipt({
-      hash: ticketRefundHash,
-    });
+  const {
+    writeContractAsync: writeTicketRefundAsync,
+    data: ticketRefundHash,
+  } = useWriteContract({ mutation: { onError: onTxError } });
+  const {
+    isLoading: isTicketRefundPending,
+    isSuccess: isTicketRefundSuccess,
+  } = useWaitForTransactionReceipt({ hash: ticketRefundHash });
 
   // Creator refund
-  const { writeContractAsync: writeCreatorRefundAsync, data: creatorRefundHash } =
-    useWriteContract({ mutation: { onError: onTxError } });
-  const { isLoading: isCreatorRefundPending, isSuccess: isCreatorRefundSuccess } =
-    useWaitForTransactionReceipt({
-      hash: creatorRefundHash,
-    });
+  const {
+    writeContractAsync: writeCreatorRefundAsync,
+    data: creatorRefundHash,
+  } = useWriteContract({ mutation: { onError: onTxError } });
+  const {
+    isLoading: isCreatorRefundPending,
+    isSuccess: isCreatorRefundSuccess,
+  } = useWaitForTransactionReceipt({ hash: creatorRefundHash });
 
   // Ticket owner data for grid
-  const ticketIds = useMemo(() => Array.from({ length: 100 }, (_, i) => i), []);
+  const ticketIds = useMemo(
+    () => Array.from({ length: 100 }, (_, i) => i),
+    [],
+  );
   const ticketOwnerCalls = useMemo(
     () =>
       ticketIds.map((ticketId) => ({
@@ -318,15 +320,19 @@ export default function PoolDetailPage({
   if (isLoading) {
     return (
       <main className={styles.main}>
-        <p className={styles.message}>Loading pool...</p>
+        <SkeletonLoader variant="infoGrid" />
+        <SkeletonLoader variant="ticketGrid" />
       </main>
     );
   }
 
-  if (!pool) {
+  if (!pool || !status) {
     return (
       <main className={styles.main}>
-        <p className={styles.message}>Pool not found.</p>
+        <div className={styles.emptyState}>
+          <span className={styles.emptyIcon}>?</span>
+          <p>Pool not found.</p>
+        </div>
       </main>
     );
   }
@@ -342,244 +348,73 @@ export default function PoolDetailPage({
 
   return (
     <main className={styles.main}>
-      <div className={styles.header}>
-        <div>
-          <h1 className={styles.title}>Pool #{poolId}</h1>
-          {status && (
-            <span className={`${styles.badge} ${styles[status]}`}>
-              {STATUS_LABELS[status]}
-            </span>
-          )}
-        </div>
-        <button className={styles.refreshBtn} onClick={handleRefetch}>
-          Refresh
-        </button>
-      </div>
-
-      <div className={styles.infoGrid}>
-        <div className={styles.infoItem}>
-          <span className={styles.infoLabel}>Deposit</span>
-          <span className={styles.infoValue}>
-            {formatMON(pool.totalDeposit)} MON
-          </span>
-        </div>
-        <div className={styles.infoItem}>
-          <span className={styles.infoLabel}>Ticket Price</span>
-          <span className={styles.infoValue}>
-            {formatMON(pool.ticketPrice)} MON
-          </span>
-        </div>
-        <div className={styles.infoItem}>
-          <span className={styles.infoLabel}>Tickets Sold</span>
-          <span className={styles.infoValue}>{pool.ticketsSold}/100</span>
-        </div>
-        <div className={styles.infoItem}>
-          <span className={styles.infoLabel}>Creator</span>
-          <span className={styles.infoValue}>
-            {shortenAddress(pool.creator)}
-          </span>
-        </div>
-        {blocksUntilReveal !== null && status === "sold_out_waiting" && (
-          <div className={styles.infoItem}>
-            <span className={styles.infoLabel}>Reveal Opens In</span>
-            <span className={styles.infoValue}>{blocksUntilReveal} blocks</span>
-          </div>
-        )}
-        {blocksUntilExpiry !== null && status === "ready_to_reveal" && (
-          <div className={styles.infoItem}>
-            <span className={styles.infoLabel}>Reveal Expires In</span>
-            <span className={styles.infoValue}>{blocksUntilExpiry} blocks</span>
-          </div>
-        )}
-      </div>
+      <PoolInfoHeader
+        pool={pool}
+        status={status}
+        blocksUntilReveal={blocksUntilReveal}
+        blocksUntilExpiry={blocksUntilExpiry}
+        onRefresh={handleRefetch}
+      />
 
       {txError && (
-        <div className={styles.section}>
+        <SectionCard variant="glass">
           <p className={styles.error}>{txError}</p>
-        </div>
+        </SectionCard>
       )}
 
-      {/* Ticket Grid */}
-      <div className={styles.section}>
-        <h2 className={styles.sectionTitle}>Tickets</h2>
-        <div className={styles.ticketGrid}>
-          {ticketIds.map((ticketId) => {
-            const ownerResult = ticketOwners?.[ticketId];
-            const owner = ownerResult?.result as string | undefined;
-            const isOwned =
-              owner && owner !== "0x0000000000000000000000000000000000000000";
-            const isYours =
-              isOwned &&
-              address &&
-              owner.toLowerCase() === address.toLowerCase();
-            const tier = tierData?.[ticketId]?.result as bigint | undefined;
-            const tierNum = tier ? Number(tier) : 0;
+      <SectionCard variant="glass">
+        <TicketGrid
+          ticketOwners={ticketOwners}
+          tierData={tierData}
+          isRevealed={pool.isRevealed}
+          userAddress={address}
+        />
+      </SectionCard>
 
-            let ticketClass = styles.ticketAvailable;
-            if (isYours) ticketClass = styles.ticketYours;
-            else if (isOwned) ticketClass = styles.ticketSold;
-
-            if (pool.isRevealed && tierNum > 0) {
-              ticketClass = `${ticketClass} ${styles[`tier${tierNum}`] ?? ""}`;
-            }
-
-            return (
-              <div
-                key={ticketId}
-                className={`${styles.ticket} ${ticketClass}`}
-                title={
-                  isYours
-                    ? `#${ticketId} (yours)${tierNum ? ` - ${tierLabel(tierNum)}` : ""}`
-                    : isOwned
-                      ? `#${ticketId} (sold)`
-                      : `#${ticketId} (available)`
-                }
-              >
-                {ticketId}
-              </div>
-            );
-          })}
-        </div>
-        <div className={styles.legend}>
-          <span>
-            <span className={`${styles.legendDot} ${styles.legendAvailable}`} />{" "}
-            Available
-          </span>
-          <span>
-            <span className={`${styles.legendDot} ${styles.legendSold}`} /> Sold
-          </span>
-          <span>
-            <span className={`${styles.legendDot} ${styles.legendYours}`} />{" "}
-            Yours
-          </span>
-        </div>
-      </div>
-
-      {/* Buy Section */}
-      {status === "open" && address && maxBuyable > 0 && (
-        <div className={styles.section}>
-          <h2 className={styles.sectionTitle}>Buy Tickets</h2>
-          <div className={styles.buyRow}>
-            <label className={styles.buyLabel}>
-              Quantity:
-              <select
-                className={styles.select}
-                value={quantity}
-                onChange={(e) => setQuantity(Number(e.target.value))}
-              >
-                {Array.from({ length: maxBuyable }, (_, i) => i + 1).map(
-                  (n) => (
-                    <option key={n} value={n}>
-                      {n}
-                    </option>
-                  ),
-                )}
-              </select>
-            </label>
-            <span className={styles.buyTotal}>
-              Total: {formatMON(pool.ticketPrice * BigInt(quantity))} MON
-            </span>
-            <button
-              className={styles.actionBtn}
-              onClick={handleBuy}
-              disabled={anyPending}
-            >
-              {isBuyPending ? "Buying..." : "Buy"}
-            </button>
-          </div>
-          <p className={styles.hint}>
-            You have {userTicketCount}/10 tickets in this pool.
-          </p>
-        </div>
+      {status === "open" && address && (
+        <BuySection
+          ticketPrice={pool.ticketPrice}
+          userTicketCount={userTicketCount}
+          onBuy={handleBuy}
+          isPending={isBuyPending}
+          anyPending={anyPending}
+        />
       )}
 
-      {/* Reveal Section (creator only) */}
       {status === "ready_to_reveal" && isCreator && (
-        <div className={styles.section}>
-          <h2 className={styles.sectionTitle}>Reveal Winners</h2>
-          <p className={styles.hint}>
-            The reveal window is open. Submit your secret to reveal winners.
-          </p>
-          <button
-            className={styles.actionBtn}
-            onClick={handleReveal}
-            disabled={anyPending}
-          >
-            {isRevealPending ? "Revealing..." : "Reveal Winners"}
-          </button>
-        </div>
+        <RevealSection
+          onReveal={handleReveal}
+          isPending={isRevealPending}
+          anyPending={anyPending}
+          blocksUntilExpiry={blocksUntilExpiry}
+        />
       )}
 
-      {/* Claim Section */}
-      {status === "revealed" && userTicketIds.length > 0 && (
-        <div className={styles.section}>
-          <h2 className={styles.sectionTitle}>Your Tickets</h2>
-          <div className={styles.ticketList}>
-            {userTicketIds.map((ticketId) => {
-              const tier = tierData?.[ticketId]?.result as bigint | undefined;
-              const tierNum = tier ? Number(tier) : 0;
-              return (
-                <div key={ticketId} className={styles.ticketListItem}>
-                  <span>Ticket #{ticketId}</span>
-                  <span className={styles[`tierBadge${tierNum}`]}>
-                    {tierLabel(tierNum)}
-                  </span>
-                </div>
-              );
-            })}
-          </div>
-          <button
-            className={styles.actionBtn}
-            onClick={handleClaimAll}
-            disabled={anyPending}
-          >
-            {isClaimPending ? "Claiming..." : "Claim All Prizes"}
-          </button>
-        </div>
+      {status === "revealed" && (
+        <ClaimSection
+          userTicketIds={userTicketIds}
+          tierData={tierData}
+          onClaimAll={handleClaimAll}
+          isClaimPending={isClaimPending}
+          isCreator={!!isCreator}
+          creatorFeeWithdrawn={pool.creatorFeeWithdrawn}
+          onCreatorWithdraw={handleCreatorWithdraw}
+          isWithdrawPending={isCreatorWithdrawPending}
+          anyPending={anyPending}
+        />
       )}
 
-      {/* Creator Withdraw */}
-      {status === "revealed" && isCreator && !pool.creatorFeeWithdrawn && (
-        <div className={styles.section}>
-          <h2 className={styles.sectionTitle}>Creator Fee</h2>
-          <p className={styles.hint}>You can withdraw your 8% creator fee.</p>
-          <button
-            className={styles.actionBtn}
-            onClick={handleCreatorWithdraw}
-            disabled={anyPending}
-          >
-            {isCreatorWithdrawPending
-              ? "Withdrawing..."
-              : "Withdraw Creator Fee"}
-          </button>
-        </div>
-      )}
-
-      {/* Refund Section */}
       {(status === "expired" || status === "reveal_expired") && (
-        <div className={styles.section}>
-          <h2 className={styles.sectionTitle}>Refund</h2>
-          {userTicketIds.length > 0 && (
-            <button
-              className={styles.actionBtn}
-              onClick={handleRefund}
-              disabled={anyPending}
-            >
-              {refundingAll
-                ? `Refunding ${refundProgress}...`
-                : `Refund All Tickets (${userTicketIds.length})`}
-            </button>
-          )}
-          {isCreator && (
-            <button
-              className={`${styles.actionBtn} ${styles.secondaryBtn}`}
-              onClick={handleCreatorRefund}
-              disabled={anyPending}
-            >
-              {isCreatorRefundPending ? "Refunding..." : "Refund Creator Deposit"}
-            </button>
-          )}
-        </div>
+        <RefundSection
+          userTicketIds={userTicketIds}
+          isCreator={!!isCreator}
+          onRefundTickets={handleRefund}
+          onRefundCreator={handleCreatorRefund}
+          isRefunding={refundingAll}
+          refundProgress={refundProgress}
+          isCreatorRefundPending={isCreatorRefundPending}
+          anyPending={anyPending}
+        />
       )}
     </main>
   );

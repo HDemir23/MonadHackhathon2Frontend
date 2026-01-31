@@ -5,14 +5,16 @@ import Link from 'next/link';
 import { useAccount, useReadContracts } from 'wagmi';
 import { CONTRACT_ADDRESS, CONTRACT_ABI } from '@/lib/contract';
 import { usePoolContext } from '@/context/PoolContext';
-import { getPoolStatus, formatMON, STATUS_LABELS } from '@/lib/utils';
+import { getPoolStatus, formatMON } from '@/lib/utils';
+import { StatusBadge } from '@/components/ui/StatusBadge';
+import { SkeletonLoader } from '@/components/ui/SkeletonLoader';
+import { ActionButton } from '@/components/ui/ActionButton';
 import styles from './page.module.css';
 
 export default function MyTicketsPage() {
   const { address } = useAccount();
   const { pools, loading, currentBlock, currentTimestamp } = usePoolContext();
 
-  // For each pool, check how many tickets the user bought
   const ticketCountCalls = useMemo(
     () =>
       address
@@ -31,7 +33,6 @@ export default function MyTicketsPage() {
     query: { enabled: !!address && pools.length > 0 },
   });
 
-  // Filter to pools where user has tickets
   const userPools = useMemo(() => {
     if (!ticketCounts) return [];
     return pools
@@ -46,7 +47,10 @@ export default function MyTicketsPage() {
     return (
       <main className={styles.main}>
         <h1 className={styles.title}>My Tickets</h1>
-        <p className={styles.message}>Connect your wallet to see your tickets.</p>
+        <div className={styles.emptyState}>
+          <span className={styles.emptyIcon}>&#128274;</span>
+          <p>Connect your wallet to see your tickets.</p>
+        </div>
       </main>
     );
   }
@@ -55,7 +59,7 @@ export default function MyTicketsPage() {
     return (
       <main className={styles.main}>
         <h1 className={styles.title}>My Tickets</h1>
-        <p className={styles.message}>Loading...</p>
+        <SkeletonLoader variant="row" count={4} />
       </main>
     );
   }
@@ -65,18 +69,27 @@ export default function MyTicketsPage() {
       <h1 className={styles.title}>My Tickets</h1>
 
       {userPools.length === 0 ? (
-        <p className={styles.message}>You don&apos;t have any tickets yet.</p>
+        <div className={styles.emptyState}>
+          <span className={styles.emptyIcon}>&#127915;</span>
+          <p>You don&apos;t have any tickets yet.</p>
+          <Link href="/">
+            <ActionButton variant="secondary">Browse Pools</ActionButton>
+          </Link>
+        </div>
       ) : (
         <div className={styles.list}>
-          {userPools.map(({ pool, ticketCount }) => {
+          {userPools.map(({ pool, ticketCount }, index) => {
             const status = getPoolStatus(pool, currentBlock, currentTimestamp);
             return (
-              <Link key={pool.id} href={`/pool/${pool.id}`} className={styles.poolRow}>
+              <Link
+                key={pool.id}
+                href={`/pool/${pool.id}`}
+                className={styles.poolRow}
+                style={{ animation: `fadeInUp 0.4s var(--ease-out-expo) ${index * 0.05}s both` }}
+              >
                 <div className={styles.poolInfo}>
                   <span className={styles.poolId}>Pool #{pool.id}</span>
-                  <span className={`${styles.badge} ${styles[status]}`}>
-                    {STATUS_LABELS[status]}
-                  </span>
+                  <StatusBadge status={status} size="sm" />
                 </div>
                 <div className={styles.poolMeta}>
                   <span>{ticketCount} ticket{ticketCount !== 1 ? 's' : ''}</span>

@@ -7,6 +7,8 @@ import { parseEther, keccak256, encodePacked, toHex, decodeEventLog } from 'viem
 import { CONTRACT_ADDRESS, CONTRACT_ABI } from '@/lib/contract';
 import { formatMON } from '@/lib/utils';
 import { usePoolContext } from '@/context/PoolContext';
+import { SectionCard } from '@/components/ui/SectionCard';
+import { ActionButton } from '@/components/ui/ActionButton';
 import styles from './page.module.css';
 
 export default function CreatePoolPage() {
@@ -44,7 +46,6 @@ export default function CreatePoolPage() {
     if (isNaN(num) || num <= 0) return 'Invalid amount.';
     if (num < 0.01) return 'Minimum deposit is 0.01 MON.';
     if (num > 10000) return 'Maximum deposit is 10,000 MON.';
-    // Check divisible by 100: deposit in wei must be divisible by 100
     if (depositBigInt && depositBigInt % 100n !== 0n) {
       return 'Deposit must be evenly divisible by 100 (for ticket pricing).';
     }
@@ -61,15 +62,11 @@ export default function CreatePoolPage() {
 
     if (!depositBigInt) return;
 
-    // Generate random secret (32 bytes)
     const randomBytes = new Uint8Array(32);
     crypto.getRandomValues(randomBytes);
     const secret = toHex(randomBytes);
-
-    // Compute commit hash: keccak256(abi.encodePacked(secret))
     const commitHash = keccak256(encodePacked(['bytes32'], [secret]));
 
-    // Hold the secret in a ref until the tx confirms and we can extract the pool ID
     pendingSecretRef.current = secret;
 
     writeContract({
@@ -81,14 +78,12 @@ export default function CreatePoolPage() {
     });
   }, [validate, depositBigInt, writeContract]);
 
-  // Once tx confirms, parse PoolCreated event to get pool ID and store the secret
   useEffect(() => {
     if (!isSuccess || !txReceipt || !pendingSecretRef.current) return;
 
     const secret = pendingSecretRef.current;
     pendingSecretRef.current = null;
 
-    // Find the PoolCreated event in the receipt logs
     let poolId: bigint | undefined;
     for (const log of txReceipt.logs) {
       try {
@@ -119,64 +114,70 @@ export default function CreatePoolPage() {
       <h1 className={styles.title}>Create Pool</h1>
 
       {!address ? (
-        <p className={styles.message}>Connect your wallet to create a pool.</p>
+        <div className={styles.emptyState}>
+          <span className={styles.emptyIcon}>&#128274;</span>
+          <p>Connect your wallet to create a pool.</p>
+        </div>
       ) : (
-        <div className={styles.form}>
-          <div className={styles.field}>
-            <label className={styles.label} htmlFor="deposit">
-              Deposit Amount (MON)
-            </label>
-            <input
-              id="deposit"
-              type="number"
-              className={styles.input}
-              placeholder="e.g. 1.0"
-              value={deposit}
-              onChange={(e) => { setDeposit(e.target.value); setError(''); }}
-              min="0.01"
-              max="10000"
-              step="0.01"
-            />
-            <p className={styles.hint}>
-              Min 0.01 MON, max 10,000 MON. Must be divisible by 100.
+        <SectionCard variant="glass">
+          <div className={styles.form}>
+            <div className={styles.field}>
+              <label className={styles.label} htmlFor="deposit">
+                Deposit Amount (MON)
+              </label>
+              <input
+                id="deposit"
+                type="number"
+                className={styles.input}
+                placeholder="e.g. 1.0"
+                value={deposit}
+                onChange={(e) => { setDeposit(e.target.value); setError(''); }}
+                min="0.01"
+                max="10000"
+                step="0.01"
+              />
+              <p className={styles.hint}>
+                Min 0.01 MON, max 10,000 MON. Must be divisible by 100.
+              </p>
+            </div>
+
+            {ticketPrice && (
+              <div className={styles.preview}>
+                <div className={styles.previewRow}>
+                  <span>Ticket Price</span>
+                  <span>{formatMON(ticketPrice)} MON</span>
+                </div>
+                <div className={styles.previewRow}>
+                  <span>Total Tickets</span>
+                  <span>100</span>
+                </div>
+                <div className={styles.previewRow}>
+                  <span>Prize Pool (90%)</span>
+                  <span>{formatMON(depositBigInt! * 90n / 100n)} MON</span>
+                </div>
+                <div className={styles.previewRow}>
+                  <span>Creator Fee (8%)</span>
+                  <span>{formatMON(depositBigInt! * 8n / 100n)} MON</span>
+                </div>
+              </div>
+            )}
+
+            {error && <p className={styles.error}>{error}</p>}
+
+            <ActionButton
+              onClick={handleSubmit}
+              loading={isPending}
+              loadingText="Creating Pool..."
+              fullWidth
+            >
+              Create Pool
+            </ActionButton>
+
+            <p className={styles.warning}>
+              Your secret will be stored in your browser&apos;s localStorage. You will need it to reveal winners after all tickets are sold. Do not clear your browser data before revealing.
             </p>
           </div>
-
-          {ticketPrice && (
-            <div className={styles.preview}>
-              <div className={styles.previewRow}>
-                <span>Ticket Price</span>
-                <span>{formatMON(ticketPrice)} MON</span>
-              </div>
-              <div className={styles.previewRow}>
-                <span>Total Tickets</span>
-                <span>100</span>
-              </div>
-              <div className={styles.previewRow}>
-                <span>Prize Pool (90%)</span>
-                <span>{formatMON(depositBigInt! * 90n / 100n)} MON</span>
-              </div>
-              <div className={styles.previewRow}>
-                <span>Creator Fee (8%)</span>
-                <span>{formatMON(depositBigInt! * 8n / 100n)} MON</span>
-              </div>
-            </div>
-          )}
-
-          {error && <p className={styles.error}>{error}</p>}
-
-          <button
-            className={styles.submitBtn}
-            onClick={handleSubmit}
-            disabled={isPending}
-          >
-            {isPending ? 'Creating Pool...' : 'Create Pool'}
-          </button>
-
-          <p className={styles.warning}>
-            Your secret will be stored in your browser&apos;s localStorage. You will need it to reveal winners after all tickets are sold. Do not clear your browser data before revealing.
-          </p>
-        </div>
+        </SectionCard>
       )}
     </main>
   );

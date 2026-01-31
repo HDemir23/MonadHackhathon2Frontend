@@ -1,0 +1,51 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 2rem;
+  animation: fadeInUp 0.4s var(--ease-out-expo) both;
+}
+
+.title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  color: var(--color-text);
+}
+
+.infoGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+  animation: fadeInUp 0.4s var(--ease-out-expo) 0.05s both;
+}
+
+.infoItem {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-left: 3px solid var(--color-primary);
+  border-radius: 8px;
+  padding: 1rem;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.infoLabel {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+  margin-bottom: 0.25rem;
+}
+
+.infoValue {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+@media (max-width: 640px) {
+  .infoGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+}

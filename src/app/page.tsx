@@ -4,6 +4,8 @@ import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import { usePoolContext } from '@/context/PoolContext';
 import { PoolCard } from '@/components/PoolCard';
+import { SkeletonLoader } from '@/components/ui/SkeletonLoader';
+import { ActionButton } from '@/components/ui/ActionButton';
 import { getPoolStatus } from '@/lib/utils';
 import type { PoolStatus } from '@/lib/types';
 import styles from './page.module.css';
@@ -49,8 +51,8 @@ export default function Home() {
     <main className={styles.main}>
       <div className={styles.topBar}>
         <h1 className={styles.title}>Prize Pools</h1>
-        <Link href="/create" className={styles.createBtn}>
-          + Create Pool
+        <Link href="/create">
+          <ActionButton>+ Create Pool</ActionButton>
         </Link>
       </div>
 
@@ -67,13 +69,26 @@ export default function Home() {
       </div>
 
       {loading ? (
-        <p className={styles.message}>Loading pools...</p>
+        <div className={styles.grid}>
+          <SkeletonLoader variant="card" count={3} />
+        </div>
       ) : filtered.length === 0 ? (
-        <p className={styles.message}>No pools found.</p>
+        <div className={styles.emptyState}>
+          <span className={styles.emptyIcon}>&#127922;</span>
+          <p>No pools found.</p>
+          <Link href="/create">
+            <ActionButton variant="secondary">Create a Pool</ActionButton>
+          </Link>
+        </div>
       ) : (
         <div className={styles.grid}>
-          {filtered.map(({ pool, status }) => (
-            <PoolCard key={pool.id} pool={pool} status={status} />
+          {filtered.map(({ pool, status }, index) => (
+            <PoolCard
+              key={pool.id}
+              pool={pool}
+              status={status}
+              style={{ animation: `fadeInUp 0.4s var(--ease-out-expo) ${index * 0.05}s both` }}
+            />
           ))}
         </div>
       )}

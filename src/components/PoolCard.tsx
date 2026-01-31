@@ -2,24 +2,25 @@
 
 import Link from 'next/link';
 import type { Pool, PoolStatus } from '@/lib/types';
-import { formatMON, STATUS_LABELS } from '@/lib/utils';
+import { formatMON } from '@/lib/utils';
+import { StatusBadge } from '@/components/ui/StatusBadge';
+import { ProgressBar } from '@/components/ui/ProgressBar';
 import styles from './PoolCard.module.css';
 
 interface PoolCardProps {
   pool: Pool;
   status: PoolStatus;
+  style?: React.CSSProperties;
 }
 
-export function PoolCard({ pool, status }: PoolCardProps) {
+export function PoolCard({ pool, status, style }: PoolCardProps) {
   const progress = (pool.ticketsSold / 100) * 100;
 
   return (
-    <Link href={`/pool/${pool.id}`} className={styles.card}>
+    <Link href={`/pool/${pool.id}`} className={styles.card} style={style}>
       <div className={styles.cardHeader}>
         <span className={styles.poolId}>Pool #{pool.id}</span>
-        <span className={`${styles.badge} ${styles[status]}`}>
-          {STATUS_LABELS[status]}
-        </span>
+        <StatusBadge status={status} />
       </div>
       <div className={styles.info}>
         <div className={styles.row}>
@@ -36,12 +37,7 @@ export function PoolCard({ pool, status }: PoolCardProps) {
           <span>Tickets Sold</span>
           <span>{pool.ticketsSold}/100</span>
         </div>
-        <div className={styles.progressBar}>
-          <div
-            className={styles.progressFill}
-            style={{ width: `${progress}%` }}
-          />
-        </div>
+        <ProgressBar value={progress} />
       </div>
     </Link>
   );

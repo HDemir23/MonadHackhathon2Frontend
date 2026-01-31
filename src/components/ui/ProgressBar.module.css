@@ -1,0 +1,51 @@
+.wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.track {
+  flex: 1;
+  height: 6px;
+  background-color: var(--color-border);
+  border-radius: 3px;
+  overflow: hidden;
+  position: relative;
+}
+
+.fill {
+  height: 100%;
+  border-radius: 3px;
+  background: var(--gradient-primary);
+  transition: width 0.4s var(--ease-out-expo);
+  position: relative;
+  overflow: hidden;
+}
+
+.animated .shine {
+  position: absolute;
+  top: 0;
+  left: -40%;
+  width: 40%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.25),
+    transparent
+  );
+  animation: progressShine 2s ease-in-out infinite;
+}
+
+@keyframes progressShine {
+  0% { left: -40%; }
+  100% { left: 140%; }
+}
+
+.label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  min-width: 2.5rem;
+  text-align: right;
+}

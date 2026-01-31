@@ -1,0 +1,48 @@
+.badge {
+  display: inline-block;
+  font-weight: 600;
+  border-radius: 999px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+}
+
+.md {
+  font-size: 0.75rem;
+  padding: 0.25rem 0.625rem;
+}
+
+.sm {
+  font-size: 0.7rem;
+  padding: 0.2rem 0.5rem;
+}
+
+.open {
+  background-color: rgba(52, 211, 153, 0.15);
+  color: var(--color-open);
+}
+
+.sold_out_waiting {
+  background-color: rgba(244, 114, 182, 0.15);
+  color: var(--color-sold-out);
+}
+
+.ready_to_reveal {
+  background-color: rgba(96, 165, 250, 0.15);
+  color: var(--color-reveal);
+}
+
+.reveal_expired {
+  background-color: rgba(251, 113, 133, 0.15);
+  color: var(--color-error);
+}
+
+.revealed {
+  background-color: rgba(96, 165, 250, 0.15);
+  color: var(--color-revealed);
+}
+
+.expired {
+  background-color: rgba(82, 82, 91, 0.25);
+  color: var(--color-expired);
+}
