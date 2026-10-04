@@ -39,3 +39,37 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# --- added by RAf sync 2026-10-04 ---
+node_modules/
+dist/
+build/
+.next/
+out/
+.expo/
+target/
+.turbo/
+coverage/
+*.log
+.env
+.env.*
+!.env.example
+!.env.sample
+!.env.template
+venv/
+.venv/
+__pycache__/
+*.pyc
+test-ledger/
+.anchor/
+.cache/
+.parcel-cache/
+.vercel/
+.idea/
+.pnpm-store/
+.gradle/
+id.json
+*keypair*.json
+12word*
+*mnemonic*
+.claude/settings.local.json
